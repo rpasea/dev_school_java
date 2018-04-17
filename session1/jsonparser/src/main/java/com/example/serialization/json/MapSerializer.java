@@ -9,28 +9,69 @@ import java.util.Map;
 
 class MapSerializer {
     public StringBuilder serialize(Map<String, Object> jsonObject) throws SerializationException {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        int leng = jsonObject.entrySet().toArray().length;
+        int cnt = 0;
+        sb.append("{");
+        for(Map.Entry<String, Object> entry: jsonObject.entrySet()){
+            sb.append("\"").append(entry.getKey()).append("\":");
+            sb.append(serialize(entry.getValue()));
+            if (cnt <  leng - 1) {
+                sb.append(",");
+                cnt++;
+            }
+        }
+        sb.append("}");
+
+        /*
+            "key" : "value",
+            "key" : "value",
+
+         */
+        return sb;
     }
 
     public StringBuilder serialize(Collection<Object> collection) throws SerializationException {
         // TODO
-        return null;
+        /*
+           [ jsonObj, jsonObj, ...]
+         */
+
+        StringBuilder sb = new StringBuilder();
+        int cnt = 0;
+        int leng = collection.size();
+        sb.append("[");
+        for(Object ob :collection){
+            sb.append(serialize(ob));
+            if(cnt < leng - 1){
+                sb.append(",");
+                cnt ++;
+            }
+        }
+        sb.append("]");
+        return sb;
     }
 
     public StringBuilder serialize(String string) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"");
+        sb.append(string);
+        sb.append("\"");
+        return sb;
     }
 
     public StringBuilder serialize(Number number) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(String.format("%s", number.toString()));
+        return sb;
     }
 
     public StringBuilder serialize(Boolean bool) {
-        // TODO
-        return null;
+        // true
+        StringBuilder sb = new StringBuilder();
+        sb.append(bool ? "\"true\"" : "\"false\"");
+        return sb;
     }
 
     public StringBuilder serialize(Object object) throws SerializationException {
