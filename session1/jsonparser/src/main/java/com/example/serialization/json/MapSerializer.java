@@ -7,30 +7,61 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
+import static com.example.serialization.json.model.Token.*;
+
 class MapSerializer {
     public StringBuilder serialize(Map<String, Object> jsonObject) throws SerializationException {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(LBRACE);
+        jsonObject.forEach((key, value) -> {
+            try {
+                sb.append(serialize(key)).append(COLON).append(serialize(value)).append(COMMA);
+
+            } catch (SerializationException e) {
+
+            }
+        });
+
+        sb.setLength(sb.length() - 1);
+        sb.append(RBRACE);
+        return sb;
     }
 
     public StringBuilder serialize(Collection<Object> collection) throws SerializationException {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(LBRACKET);
+        collection.forEach((item) -> {
+            try {
+                sb.append(this.serialize(item)).append(COMMA);
+
+            } catch (SerializationException e) {
+
+            }
+        });
+        sb.setLength(sb.length() - 1);
+        sb.append(RBRACKET);
+        return sb;
     }
 
     public StringBuilder serialize(String string) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(QUOTE).append(string).append(QUOTE);
+
+        return sb;
     }
 
     public StringBuilder serialize(Number number) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(number);
+
+        return sb;
     }
 
     public StringBuilder serialize(Boolean bool) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(bool);
+
+        return sb;
     }
 
     public StringBuilder serialize(Object object) throws SerializationException {

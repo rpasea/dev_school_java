@@ -27,4 +27,10 @@ public enum Token {
     public static Token forChar(char c) {
         return charToToken.get(c);
     }
+
+
+    @Override
+    public String toString() {
+        return new String() + getValue();
+    }
 }
