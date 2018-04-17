@@ -9,28 +9,68 @@ import java.util.Map;
 
 class MapSerializer {
     public StringBuilder serialize(Map<String, Object> jsonObject) throws SerializationException {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+        sb.append('{');
+
+        jsonObject.forEach((key, value) -> {
+            StringBuilder serializedValue = null;
+
+            try {
+                serializedValue = serialize(value);
+            }catch (SerializationException se){
+
+            }
+
+            sb.append(String.format("\"%s\":%s,", key, serializedValue == null ? "" : serializedValue));
+        });
+
+        sb.deleteCharAt(sb.length() - 1);
+
+        sb.append('}');
+
+        return sb;
     }
 
     public StringBuilder serialize(Collection<Object> collection) throws SerializationException {
-        // TODO
+
+        StringBuilder collectionSb = new StringBuilder();
+
+        collectionSb.append('[');
+
+        collection.forEach(currentObject -> {
+
+            StringBuilder serializedValue = null;
+
+            try{
+                serializedValue = serialize(currentObject);
+            }catch (SerializationException se){
+
+            }
+
+            collectionSb.append(serializedValue == null ? "" : serializedValue);
+            collectionSb.append(",");
+        });
+
+        collectionSb.deleteCharAt(collectionSb.length() - 1);
+        collectionSb.append(']');
+
         return null;
     }
 
     public StringBuilder serialize(String string) {
-        // TODO
-        return null;
+
+        return new StringBuilder().append(String.format("\"%s\"", string));
     }
 
     public StringBuilder serialize(Number number) {
-        // TODO
-        return null;
+
+        return new StringBuilder().append(String.format("%s", number.toString()));
     }
 
     public StringBuilder serialize(Boolean bool) {
-        // TODO
-        return null;
+
+        return new StringBuilder().append(bool ? "\"true\"" : "\"false\"");
     }
 
     public StringBuilder serialize(Object object) throws SerializationException {
