@@ -1,7 +1,7 @@
 package com.example.serialization.json;
 
 import com.example.serialization.json.model.Token;
-import javafx.util.Pair;
+import com.example.serialization.json.model.Pair;
 
 class DeseializationHelper {
     public static Pair<Token, Integer> findNextToken(String json) {

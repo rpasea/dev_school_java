@@ -2,7 +2,7 @@ package com.example.serialization.json;
 
 import com.example.serialization.DeserializationException;
 import com.example.serialization.json.model.*;
-import javafx.util.Pair;
+import com.example.serialization.json.model.Pair;
 
 import java.util.LinkedList;
 import java.util.Map;
