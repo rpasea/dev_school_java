@@ -1,10 +1,8 @@
 package com.example.serialization.json;
 
-
 import com.example.serialization.SerializationException;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 class MapSerializer {
@@ -18,7 +16,7 @@ class MapSerializer {
 
             try {
                 serializedValue = serialize(value);
-            }catch (SerializationException se){
+            } catch (SerializationException se) {
 
             }
 
@@ -42,9 +40,9 @@ class MapSerializer {
 
             StringBuilder serializedValue = null;
 
-            try{
+            try {
                 serializedValue = serialize(currentObject);
-            }catch (SerializationException se){
+            } catch (SerializationException se) {
 
             }
 
@@ -55,7 +53,7 @@ class MapSerializer {
         collectionSb.deleteCharAt(collectionSb.length() - 1);
         collectionSb.append(']');
 
-        return null;
+        return collectionSb;
     }
 
     public StringBuilder serialize(String string) {
