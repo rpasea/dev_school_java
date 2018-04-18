@@ -263,38 +263,3 @@ You can find more extensive docs here: [Mockito](https://static.javadoc.io/org.m
 
 ## Exercises
 
-We will be trying to implement a TCP server which will accept and respond to client TCP connections.
-
-The Server consists of 3 layers:
-* socket layer -> encapsulates the OS socket API and manages connections
-* codec pipeline layer -> transforms to/from the TCP byte stream to the needed classes in multiple stages
-* handler layer -> here you register your business logic handler.
-
-The Connection class ties the layers together and it performs the following actions:
-* take bytes from the socket layer
-* feeds them to the codec pipeline to get application domain objects
-* passes the objects to the handler
-* transform each response got from the handler to bytes with the codec pipeline
-* send the bytes to the client with the socket layer.
-
-### 1 Mockito
-
-Have a look over the *Connection* class. It is responsible of moving data between the socket layer and the handler 
-layer, performing any required transformations with the codec pipeline and taking care of buffering segmented requests.
-
-In this exercise we need to use Mockito to unit test this class. Go to the *ConnectionTest* class and add the required 
-tests.
-
-### 2 Threads & Sockets 
-
-We will implement a classic server which creates one thread per client connection. You have to complete the 
-*ThreadedServer* class. Follow the comments there.
-
-You can test your implementation with the *TCPServerIT* integration test.
-
-### 3 NIO server discussion
-
-### [BONUS] Performance test
-
-Look over the *TCPServerIT* implementation and try to implement a performance test. Try to compare throughput 
-between the threaded and nio implementations.
