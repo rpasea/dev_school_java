@@ -1,0 +1,11 @@
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/MapDeserializer.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/model/Element.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/SerializationException.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/model/ValueElement.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/App.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/SerializerDeserializer.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/model/Token.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/JsonSerdes.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/DeserializationException.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/DeserializationHelper.java
+/home/rcodescu/dev_school_java/session1/jsonparser/src/main/java/com/example/serialization/json/MapSerializer.java

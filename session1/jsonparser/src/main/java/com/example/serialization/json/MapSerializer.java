@@ -4,33 +4,63 @@ package com.example.serialization.json;
 import com.example.serialization.SerializationException;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 class MapSerializer {
     public StringBuilder serialize(Map<String, Object> jsonObject) throws SerializationException {
         // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (Map.Entry<String, Object> entry: jsonObject.entrySet()) {
+            sb.append("\"").append(entry.getKey()).append("\":");
+            sb.append(serialize(entry.getValue())).append(",");
+        }
+        sb.setLength(sb.length() - 1);
+
+        sb.append("}");
+        return sb;
     }
 
     public StringBuilder serialize(Collection<Object> collection) throws SerializationException {
         // TODO
-        return null;
+        //System.out.println(collection);
+        StringBuilder sb = new StringBuilder();
+        Iterator<Object> it = null;
+        it = collection.iterator();
+        sb.append("[");
+        while (it.hasNext()){
+            Object elem = it.next();
+            sb.append(serialize(elem)).append(",");
+
+
+        }
+        sb.setLength(sb.length() - 1);
+        sb.append("]");
+        return sb;
     }
 
     public StringBuilder serialize(String string) {
         // TODO
-        return null;
+       // System.out.println(string);
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"").append(string).append("\"");
+        return sb;
     }
 
     public StringBuilder serialize(Number number) {
         // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(number);
+        return sb;
     }
 
     public StringBuilder serialize(Boolean bool) {
         // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"").append(bool).append("\"");
+        return sb;
     }
 
     public StringBuilder serialize(Object object) throws SerializationException {

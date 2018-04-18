@@ -1,0 +1,12 @@
+com/example/serialization/json/model/ValueElement.class
+com/example/App.class
+com/example/serialization/json/MapDeserializer$1.class
+com/example/serialization/json/model/Element.class
+com/example/serialization/json/MapSerializer.class
+com/example/serialization/json/model/Token.class
+com/example/serialization/json/MapDeserializer.class
+com/example/serialization/json/DeseializationHelper.class
+com/example/serialization/SerializationException.class
+com/example/serialization/DeserializationException.class
+com/example/serialization/SerializerDeserializer.class
+com/example/serialization/json/JsonSerdes.class

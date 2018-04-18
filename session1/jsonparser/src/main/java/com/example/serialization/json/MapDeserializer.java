@@ -16,6 +16,7 @@ public class MapDeserializer {
     }
 
     public Map<String, Object> deserialize(String json) throws DeserializationException {
+        System.out.println(json);
         json = json.trim();
 
         while (!json.isEmpty()) {
@@ -27,7 +28,7 @@ public class MapDeserializer {
             }
 
             String before = json.substring(0, next.getValue()).trim();
-
+           // System.out.println(before);
             if (!stack.isEmpty() && !before.isEmpty()) {
                 stack.peekLast().parseNextText(before);
             }
@@ -35,6 +36,7 @@ public class MapDeserializer {
             switch (next.getKey()) {
                 case LBRACE:
                     //openNewElement(ObjectElement.class);
+                    //System.out.println(next);
                     break;
                 case LBRACKET:
                     //openNewElement(ArrayElement.class);
