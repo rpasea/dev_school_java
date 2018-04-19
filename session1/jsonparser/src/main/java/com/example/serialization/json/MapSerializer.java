@@ -9,23 +9,54 @@ import java.util.Map;
 
 class MapSerializer {
     public StringBuilder serialize(Map<String, Object> jsonObject) throws SerializationException {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        int i=0;
+        for (Map.Entry<String, Object> entry: jsonObject.entrySet()) {
+            sb.append("\"").append(entry.getKey()).append("\":");
+            sb.append(serialize(entry.getValue()));
+            if (entry.getValue() instanceof Map || entry.getValue() instanceof Collection) {
+                i++;
+            }
+        }
+        if(i==0){
+            sb.deleteCharAt(sb.length()-1);
+        }
+        sb.append("}");
+
+        return sb;
     }
 
     public StringBuilder serialize(Collection<Object> collection) throws SerializationException {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+
+        sb.append("[");
+        int i =1;
+        for (Object entry: collection) {
+            if (i<collection.size()) {
+                sb.append(serialize(entry)).append(",");
+                i++;
+            }
+            else{
+                sb.append(serialize(entry));
+            }
+        }
+        sb.append("]");
+        return sb;
+
     }
 
     public StringBuilder serialize(String string) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("\"").append(string).append("\",");
+        return sb;
     }
 
     public StringBuilder serialize(Number number) {
-        // TODO
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(number).append(",");
+        return sb;
     }
 
     public StringBuilder serialize(Boolean bool) {
