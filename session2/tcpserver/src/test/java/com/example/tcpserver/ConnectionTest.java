@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Mockito.verify;
@@ -38,9 +39,10 @@ public class ConnectionTest {
     @Before
     public void setup() {
         when(codecPipeline.getReadOrder()).thenReturn(Collections.singletonList(codec).iterator());
-        /*
-         * You should use Mockito to correctly wire the mocks so you can implement your unit test
-         */
+        when (handler.handle(REQUEST)).thenReturn(Arrays.asList(REQUEST));
+        when(codec.decode(SERIALIZED_REQUEST)).thenReturn(Arrays.asList(REQUEST));
+        when(codecPipeline.getWriteOrder()).thenReturn(Collections.singletonList(codec).iterator());
+        when(codec.encode(REQUEST)).thenReturn(SERIALIZED_REQUEST);
     }
 
     @Test
