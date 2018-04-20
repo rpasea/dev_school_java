@@ -87,3 +87,65 @@ Injection can happen:
 * in fields.
 
 ## Exercises
+
+We will be trying to implement an HTTP server based on the TCP server we completed in the previous session.
+
+Have a look at the pom.xml, you ca see there the tcpserver dependency. In order for maven to be able to resolve it, 
+you need to put it into your local repo. Go to the project, fix any compilation errors you might have, fix the tests 
+(add the *@Ignore* annotation to the failing ones) and run the **maven install** phase, either from the cmdline or 
+with your IDE. Now maven should be able to resolve the dependency in the httpserver project.
+
+We will be implementing the server in 2 steps: first we will be dealing with the protocol and then with the file 
+operations.
+
+### 1 HTTP protocol 
+
+[Request](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html)
+
+[Response](https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6)
+
+In order to implement the protocol we need to handle de request/response encoding and implement a handler. For the 
+first step, use a simple handler which returns a response containing the "hello world!" string for http GET.
+
+You have the model implemented in the *HttpRequest* and *HttpResponse* classes. You need to implement:
+* a *HttpRequestCodec* which **decodes** a HttpRequest from a String
+* a *HttpResponseCodec* which **encodes** a HttpResponse into a String.
+
+The CodecPipeline is already set up and you don't have to deal with the *encode* of the HttpRequestCodec or the 
+*decode* of the HttpResponseCodec. Just return null.
+
+The response encoder is simple, just follow the protocol.
+
+For Decoding requests, there are 3 phases:
+* the request line which ends with *CRLF*
+* the header part which has a list of headers, each ending with *CRLF*. A *CRLF* on an empty line signifies the end 
+of the header list.
+* the body, whose length is specified by the *Content-length* header.
+
+You will need to deal with segmentation in this codec (using a buffer), because the length of a http request depends 
+on the protocol, meaning you can't use a splitting codec without actually parsing the requests.
+
+You have the loop which navigates between the phases implemented, just implement the following private methods:
+* parseRequestLine
+* parseHeaders
+* parseBody.
+
+The convention is that these methods will consume from the buffer the usable bytes and will return a boolean 
+signifying if the phase is complete or not (you encountered the header list terminator or you processed the whole 
+body length).
+
+Test the server by connecting to localhost:8080 from your browser.
+
+### 2 Files
+
+Our server will be started in the root specified by the **server.root** config in application properties. We will try
+ to implement as much of the functionality of a normal http server:
+* GET will return the contents of a file or, if called on a directory, a list of the folder's children with anchor 
+HTML elements (*<a>*) for navigation
+* PUT will create the file with the given content at the given path (create any missing parent)
+* DELETE will delete the resource at the given path.
+
+You have hints in the code for the GET functionality.
+
+For testing, you can use the browser for GET and an HTTP client for the others (e.g. : postman, curl, the IDEA 
+integrated REST client).
