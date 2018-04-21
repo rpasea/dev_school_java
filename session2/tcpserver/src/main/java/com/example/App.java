@@ -22,13 +22,13 @@ public class App {
     public static void main( String[] args ) throws IOException {
 
 
-        TcpServer server = new NioServer(8080, new CodecPipelineFactory() {
+        TcpServer server = new ThreadedServer(8080, new CodecPipelineFactory() {
             @Override
             public CodecPipeline newCodecPipeline() {
                 CodecPipeline pipeline = new CodecPipeline();
-                //pipeline.addCodec(new LengthFieldCodec());
                 pipeline.addCodec(new StringCodec());
-                return  pipeline;
+
+                return pipeline;
             }
         }, new MessageHandler<String, String>() {
 
@@ -39,6 +39,25 @@ public class App {
         });
 
         server.start();
+
+
+//        TcpServer server = new NioServer(8080, new CodecPipelineFactory() {
+//            @Override
+//            public CodecPipeline newCodecPipeline() {
+//                CodecPipeline pipeline = new CodecPipeline();
+//                //pipeline.addCodec(new LengthFieldCodec());
+//                pipeline.addCodec(new StringCodec());
+//                return  pipeline;
+//            }
+//        }, new MessageHandler<String, String>() {
+//
+//            @Override
+//            public List<String> handle(String message) {
+//                return Collections.singletonList(message);
+//            }
+//        });
+//
+//        server.start();
 
         Scanner stdin = new Scanner(System.in);
         System.out.println("Server started, press enter to exit");

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,6 @@ public class ThreadedServer extends TcpServer {
     private static final Logger LOG = LoggerFactory.getLogger(TcpServer.class);
 
     private static final int BUFFER_SIZE = 1024;
-    private int port;
     private ServerSocket serverSocket;
     private Thread serverThread;
 
@@ -35,36 +35,73 @@ public class ThreadedServer extends TcpServer {
         /*
          * You should start the server socket and create the server thread, starting it with the listenLoop()
          */
+
+        serverSocket = new ServerSocket(port);
+        serverThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                listenLoop();
+            }
+        });
+        serverThread.start();
+
+
+        System.out.printf("Listening on %s\n", serverSocket.toString());
     }
 
     private void listenLoop() {
+        setRunning(true);
         while (isRunning()) {
-            Socket client;
 
             // accept new connections
-
+            Socket client = null;
+            try {
+                client = serverSocket.accept();
+            } catch (IOException e) {
+                return;
+            }
 
             // after the connection was accepted, initialize a Connection object
             Connection connection = startNewConnection();
 
-
-            Thread clientThread;
-
-            /*
-             * start a new thread which will handle this new connection (use the clientLoop() method)
-             * create the ConnectionData associated with this connection and store it in the connections map
-             */
+            Thread clientThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    clientLoop(connection);
+                }
+            });
+            connections.put(connection, new ConnectionData(client, clientThread));
+            clientThread.start();
         }
+
     }
 
     private void clientLoop(Connection connection) {
-        // get the socket associated with this client. use the map.
-
-        // create a buffer and read from the socket as long as it is open
-
         // remember to handle closed sockets
 
-        closeConnection(connection);
+        // get the socket associated with this client. use the map.
+        Socket socket = connections.get(connection).getSocket();
+
+        // create a buffer and read from the socket as long as it is open
+        byte[] buff = new byte[1024];
+
+        while (true) {
+            int len = 0;
+            try {
+                len = socket.getInputStream().read(buff);
+            } catch (IOException e) {
+                // does this mean that socket was closed?
+                return;
+            }
+            if (len < 0) {
+                break;
+            }
+
+            ByteBuffer bbuff = ByteBuffer.wrap(Arrays.copyOfRange(buff, 0, len));
+            buff = new byte[1024];
+            connection.received(bbuff);
+        }
+
     }
 
     @Override
@@ -72,22 +109,35 @@ public class ThreadedServer extends TcpServer {
         this.setRunning(false);
         // close all the connection sockets
 
-        // close the server socket
+        for (Map.Entry<Connection, ConnectionData> entry : connections.entrySet())
+            closeConnection(entry.getKey());
 
-        // try to cleanly wait for serverThread to finish (use the join() method)
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // try to avoid calling serverThread.kill() or only call it as a last resort.
     }
 
     @Override
     public void send(Connection connection, ByteBuffer data) {
-        // retrieve the socket associated with the connectiond and perform a write
+        try {
+            connections.get(connection).getSocket().getOutputStream().write(data.array());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void closeConnection(Connection connection) {
         // close the socket of the connection and cleanly close the client thread
-
+        try {
+            connections.get(connection).getSocket().close();
+            connections.remove(connection);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static class ConnectionData {
