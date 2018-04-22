@@ -27,10 +27,15 @@ public class Connection {
             try {
                 data = codec.encode(data);
             } catch (ClassCastException e) {
+                System.out.println("ClassCastException from Connection.send()");
                 // maybe we need to skip some codec
             }
         }
         server.send(this, (ByteBuffer) data);
+    }
+
+    public ByteBuffer getbb(){
+        return buffer;
     }
 
     public void received(ByteBuffer data) {

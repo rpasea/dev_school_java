@@ -74,7 +74,7 @@ public class NioServer extends TcpServer {
                     continue;
                 }
 
-                if (key.isAcceptable()) {
+                if (key.isAcceptable()) { 
                     accept(key);
                 }
                 else if (key.isReadable()) {
