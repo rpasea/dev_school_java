@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +58,7 @@ public class ConnectionTest {
     }
 
     @Test
-    public void whenReceivingMessageShouldDecodeWithCodecsCallHandlerAndSendResponse() {
+    public void whenReceivingMessageShouldDecodeWithCodecsCallHandlerAndSendResponse() throws IOException {
         connection.received(SERIALIZED_REQUEST);
 
         verify(server).send(connection, SERIALIZED_REQUEST);

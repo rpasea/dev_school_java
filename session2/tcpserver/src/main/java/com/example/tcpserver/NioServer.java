@@ -1,6 +1,5 @@
 package com.example.tcpserver;
 
-import com.example.tcpserver.codec.CodecPipeline;
 import com.example.tcpserver.codec.CodecPipelineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +114,7 @@ public class NioServer extends TcpServer {
         }
     }
 
-    private void read(SelectionKey key) {
+    private void read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
 
         Connection connection = socketToConnection.get(channel);

@@ -47,7 +47,7 @@ public class TCPServerIT {
     }
 
     @After
-    public void teardown() {
+    public void teardown() throws InterruptedException {
         nioServer.stop();
     }
 

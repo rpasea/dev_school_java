@@ -1,6 +1,5 @@
 package com.example.tcpserver;
 
-import com.example.tcpserver.codec.CodecPipeline;
 import com.example.tcpserver.codec.CodecPipelineFactory;
 
 import java.io.IOException;
@@ -19,9 +18,9 @@ public abstract class TcpServer {
     }
 
     public abstract void start() throws IOException;
-    public abstract void stop();
-    public abstract void send(Connection connection, ByteBuffer data);
-    public abstract void closeConnection(Connection connection);
+    public abstract void stop() throws InterruptedException;
+    public abstract void send(Connection connection, ByteBuffer data) throws IOException;
+    public abstract void closeConnection(Connection connection) throws IOException;
 
 
     protected Connection startNewConnection() {

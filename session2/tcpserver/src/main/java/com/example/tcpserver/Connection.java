@@ -3,6 +3,7 @@ package com.example.tcpserver;
 import com.example.tcpserver.codec.Codec;
 import com.example.tcpserver.codec.CodecPipeline;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -20,7 +21,7 @@ public class Connection {
         this.handler = handler;
     }
 
-    public void send(Object data) {
+    public void send(Object data) throws IOException {
         Iterator<Codec> pipeline = codecPipeline.getWriteOrder();
         while (pipeline.hasNext()) {
             Codec codec = pipeline.next();
@@ -33,7 +34,7 @@ public class Connection {
         server.send(this, (ByteBuffer) data);
     }
 
-    public void received(ByteBuffer data) {
+    public void received(ByteBuffer data) throws IOException {
         Iterator<Codec> pipeline = codecPipeline.getReadOrder();
 
         if (buffer.remaining() > 0) {
