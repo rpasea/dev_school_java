@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import java.util.Arrays;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -26,6 +27,7 @@ public class ConnectionTest {
     private TcpServer server;
     @Mock
     private CodecPipeline codecPipeline;
+    //the handler should echo back the request
     @Mock
     private MessageHandler handler;
     @Mock
@@ -41,8 +43,17 @@ public class ConnectionTest {
         /*
          * You should use Mockito to correctly wire the mocks so you can implement your unit test
          */
-    }
 
+        when(codecPipeline.getWriteOrder()).thenReturn(Collections.singletonList(codec).iterator());
+
+        when(codec.decode(SERIALIZED_REQUEST)).thenReturn(Arrays.asList(REQUEST));
+        when(handler.handle(REQUEST)).thenReturn(Collections.singletonList(REQUEST));
+        when(codecPipeline.getWriteOrder()).thenReturn(Collections.singletonList(codec).iterator());
+        when(codec.encode(REQUEST)).thenReturn(SERIALIZED_REQUEST);
+        //when(server.send(REQUEST));
+    }
+    //setup codecPipeline cu codec
+    //apoi conection cu codec in sine samd
     @Test
     public void whenReceivingMessageShouldDecodeWithCodecsCallHandlerAndSendResponse() {
         connection.received(SERIALIZED_REQUEST);

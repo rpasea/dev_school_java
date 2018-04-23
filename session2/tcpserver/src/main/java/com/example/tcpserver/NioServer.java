@@ -80,6 +80,8 @@ public class NioServer extends TcpServer {
                 else if (key.isReadable()) {
                     read(key);
                 }
+
+                //key.isWritable() e posibil
             }
         }
     }
@@ -224,3 +226,6 @@ public class NioServer extends TcpServer {
         }
     }
 }
+
+
+//reactive programming in web server TODO search
