@@ -38,6 +38,13 @@ public class ConnectionTest {
     @Before
     public void setup() {
         when(codecPipeline.getReadOrder()).thenReturn(Collections.singletonList(codec).iterator());
+        when(codec.decode(SERIALIZED_REQUEST)).thenReturn(Collections.singletonList(REQUEST));
+
+        when(handler.handle(REQUEST)).thenReturn(Collections.singletonList(REQUEST));
+
+
+        when(codecPipeline.getWriteOrder()).thenReturn(Collections.singletonList(codec).iterator());
+        when(codec.encode(REQUEST)).thenReturn(SERIALIZED_REQUEST);
         /*
          * You should use Mockito to correctly wire the mocks so you can implement your unit test
          */
