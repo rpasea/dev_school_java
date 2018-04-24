@@ -2,10 +2,36 @@ package com.example.serialization.json;
 
 import com.example.serialization.DeserializationException;
 import com.example.serialization.json.model.*;
-import javafx.util.Pair;
+//import javafx.util.Pair;
 
 import java.util.LinkedList;
 import java.util.Map;
+
+class Pair<K, V>{
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public void setKey(K key) {
+        this.key = key;
+    }
+
+    public V getValue() {
+        return value;
+    }
+
+    public void setValue(V value) {
+        this.value = value;
+    }
+}
 
 public class MapDeserializer {
     private LinkedList<Element> stack;

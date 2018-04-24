@@ -5,8 +5,10 @@ import com.example.tcpserver.codec.CodecPipeline;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.nio.ByteBuffer;
@@ -38,6 +40,12 @@ public class ConnectionTest {
     @Before
     public void setup() {
         when(codecPipeline.getReadOrder()).thenReturn(Collections.singletonList(codec).iterator());
+
+        when(codec.decode(ArgumentMatchers.anyObject())).thenReturn(Collections.singletonList(0));
+        when(handler.handle(ArgumentMatchers.anyObject())).thenReturn(Collections.singletonList(0));
+
+        when(codecPipeline.getWriteOrder()).thenReturn(Collections.singletonList(codec).iterator());
+        when(codec.encode(ArgumentMatchers.anyObject())).thenReturn(SERIALIZED_REQUEST);
         /*
          * You should use Mockito to correctly wire the mocks so you can implement your unit test
          */
@@ -47,7 +55,7 @@ public class ConnectionTest {
     public void whenReceivingMessageShouldDecodeWithCodecsCallHandlerAndSendResponse() {
         connection.received(SERIALIZED_REQUEST);
 
-        verify(server).send(connection, SERIALIZED_REQUEST);
+        verify(server).send(Mockito.eq(connection), ArgumentMatchers.any(ByteBuffer.class));
     }
 
 }
