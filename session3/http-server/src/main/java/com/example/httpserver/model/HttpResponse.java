@@ -57,9 +57,7 @@ public class HttpResponse {
     public void setBody(String body) {
         this.body = body;
 
-        if(headers.containsKey(contentLength)){
-            headers.put(contentLength, Integer.toString(body.length()));
-        }
+        headers.put(contentLength, Integer.toString(body.length()));
     }
 
     public String getStatusLine(){
