@@ -136,6 +136,8 @@ body length).
 
 Test the server by connecting to localhost:8080 from your browser.
 
+**[Bonus]** Verify your implementation by writing HttpRequestCodecTest unit test
+
 ### 2 Files
 
 Our server will be started in the root specified by the **server.root** config in application properties. We will try
@@ -149,3 +151,8 @@ You have hints in the code for the GET functionality.
 
 For testing, you can use the browser for GET and an HTTP client for the others (e.g. : postman, curl, the IDEA 
 integrated REST client).
+
+**[Bonus]** Verify your implementation by writing HttpHandlerIntegrationTest integration test
+
+See how you can set-up you test environment. Use the maven generated target folder and add some resources.
+
