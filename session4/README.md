@@ -212,4 +212,37 @@ In order to test your web layer you can annotate your test with *@WebMvcTest*. T
 HTTP calls.
 
 ## Excercises
-    
+
+We will start the implementation of something like a twitter clone. We have users and tweets, each tweet belonging to
+ a user and containing an 140 character long message.
+ 
+ We will first implement the data layer and then the web layer.
+
+### 1 The Data Layer
+
+You need to implement the model class for Tweet. Have a look in the *schema.sql* resource file to see the 
+resource. The model classes should be simple data classes, so don't add behaviour to them.
+
+Next you need to implement the data access object for the Tweet class. Complete the code in the TweetDAO class.
+
+In order to test your implementation you need to write an integration test for the TweetDAO class. Use 
+UserDAOIT as a starting point and implement an integration test for the TweetDAO class. Test all the functionality in
+ TweetDAO.
+ 
+ 
+### 2 The Web Layer
+
+#### 2.1 API
+
+We need to create a Web API over our tweets. Have a look over the user API in UsersResource and implement the 
+TweetsResource class.
+
+#### 2.2 Validation
+
+Make sure that the tweets have an owner and that their message doesn't exceed 140 chars (hint: use javax.validation 
+annotations)
+
+#### 2.3 Integration Tests
+
+Have a look over the TweetsResourceIT class and implement the rest of the tests.
+
