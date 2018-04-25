@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,7 @@ public class ThreadedServer extends TcpServer {
     private static final Logger LOG = LoggerFactory.getLogger(TcpServer.class);
 
     private static final int BUFFER_SIZE = 1024;
-    private int port = 10001;
+    private int port;
     private ServerSocket serverSocket;
     private Thread serverThread;
 
@@ -36,46 +35,20 @@ public class ThreadedServer extends TcpServer {
         /*
          * You should start the server socket and create the server thread, starting it with the listenLoop()
          */
-
-        ServerSocket serverSocket = new ServerSocket(port);
-        setRunning(true);
-        Runnable serverTask = new Runnable() {
-            @Override
-            public void run() {
-                listenLoop();
-            }
-        };
-        Thread serverThread = new Thread(serverTask);
-        serverThread.start();
     }
 
     private void listenLoop() {
         while (isRunning()) {
+            Socket client;
 
-            try {
-                Socket client = serverSocket.accept();
-            } catch (IOException e) {
-                stop();
-            }
+            // accept new connections
 
 
             // after the connection was accepted, initialize a Connection object
             Connection connection = startNewConnection();
 
 
-            Thread clientThread = new Thread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            clientLoop(connection);
-                        }
-                    }
-            );
-
-            connections.put(connection, )
-
-            clientThread.start();
-
+            Thread clientThread;
 
             /*
              * start a new thread which will handle this new connection (use the clientLoop() method)
@@ -85,28 +58,11 @@ public class ThreadedServer extends TcpServer {
     }
 
     private void clientLoop(Connection connection) {
-
         // get the socket associated with this client. use the map.
-        Socket socket = connections.get(connection).getSocket();
 
-        ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+        // create a buffer and read from the socket as long as it is open
 
-        try {
-            while (true) {
-                int len = socket.getInputStream().read(buffer.array());
-
-                if (len < 0) {
-                    break;
-                }
-
-                buffer.limit(len);
-                buffer.clear();
-
-                connection.received(buffer);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // remember to handle closed sockets
 
         closeConnection(connection);
     }
@@ -117,7 +73,6 @@ public class ThreadedServer extends TcpServer {
         // close all the connection sockets
 
         // close the server socket
-//        serverSocket.close();
 
         // try to cleanly wait for serverThread to finish (use the join() method)
 
