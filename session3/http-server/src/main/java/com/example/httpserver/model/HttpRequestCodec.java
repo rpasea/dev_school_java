@@ -3,6 +3,7 @@ package com.example.httpserver.model;
 import com.example.tcpserver.codec.Codec;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,15 +70,33 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
 
         // the request line has the format:
         // METHOD URI HTTP/1.1 CRLF
+        int position = buffer.indexOf(CRLF);
+        if(position == -1){
+            return false;
+        }
+
+        String requestLine = buffer.substring(0, position);
+
+        String[] parts = requestLine.trim().split(" ");
+        if(parts.length != 3){
+            return false;
+        }
 
         // search the buffer for CRLF to see if you can process the line, otherwise return false
         // to stop the parser from trying the next phase
+        request.setMetthod(parts[0]);
+        try {
+            request.setUri(new URI(parts[1]));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
+        request.setVersion(parts[2]);
 
         // parse the line and set the fields on this.request
 
         // don't forget to consume the line from the parser
-
+        buffer.delete(0, position + 2);
         return true;
     }
 
@@ -88,7 +107,23 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
 
         // headers have format:
         // key: value CRLF
+        int position = buffer.indexOf(CRLF);
+        while(position != -1){
+            String headerLine = buffer.substring(0, position);
 
+            if (headerLine.length() == 0) {
+                return true;
+            }
+
+            String[] parts = headerLine.split(":");
+            String key = parts[0].trim();
+            String value = parts[1].trim();
+
+            request.getHeaders().put(key,value);
+
+            buffer.delete(0, position + 2);
+            position = buffer.indexOf(CRLF);
+        }
         // the list ends with an empty CRLF
 
         // so you can process headers as long as you have CRLFs
@@ -104,10 +139,13 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
 
     private boolean parseBody() {
         // body length is controlled by the LENGTH_HEADER header
-
+        int bodyLength = Integer.parseInt(request.getHeaders().get(LENGTH_FIELD));
         // if you don't have enough bytes in the buffer, return false
-
+        if (buffer.length() < bodyLength) {
+            return false;
+        }
         // otherwise consume them
+        request.setBody(buffer.substring(0, bodyLength));
         return true;
     }
 
