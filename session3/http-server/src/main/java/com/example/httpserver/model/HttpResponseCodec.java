@@ -16,7 +16,14 @@ public class HttpResponseCodec implements Codec<String, HttpResponse> {
 
     @Override
     public String encode(HttpResponse httpResponse) {
-        // this is pretty straight forward, just implement the protocol
-        return "";
+        StringBuilder sb = new StringBuilder();
+        httpResponse.getHeaders().forEach((key, value) -> {
+            sb.append(value);
+        });
+        sb.append(httpResponse.getVersion());
+        sb.append(httpResponse.getStatus());
+        sb.append(httpResponse.getBody());
+
+        return sb.toString();
     }
 }

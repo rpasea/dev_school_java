@@ -3,6 +3,8 @@ package com.example.httpserver.model;
 import com.example.tcpserver.codec.Codec;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.cert.CRL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,10 +36,14 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
         while (canContinue) {
             switch (phase) {
                 case REQUEST_LINE:
-                    if (parseRequestLine()) {
-                        phase = Phase.HEADERS;
-                    } else {
-                        canContinue = false;
+                    try {
+                        if (parseRequestLine()) {
+                            phase = Phase.HEADERS;
+                        } else {
+                            canContinue = false;
+                        }
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
                     }
                     break;
                 case HEADERS:
@@ -65,18 +71,29 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
     /*
         returns if the request line is done
      */
-    private boolean parseRequestLine() {
+    private boolean parseRequestLine() throws URISyntaxException {
 
         // the request line has the format:
         // METHOD URI HTTP/1.1 CRLF
+        int position = buffer.indexOf(CRLF);
 
+        if (position == -1) {
+            return false;
+        }
+
+        String requestLine = buffer.substring(0, position);
         // search the buffer for CRLF to see if you can process the line, otherwise return false
         // to stop the parser from trying the next phase
 
+        String [] parts = requestLine.split(" ");
 
         // parse the line and set the fields on this.request
+        request.setMetthod(parts[0]);
+        request.setUri(new URI(parts[1]));
+        request.setVersion(parts[2]);
 
         // don't forget to consume the line from the parser
+        buffer.delete(0, position  + 2);
 
         return true;
     }
@@ -88,6 +105,25 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
 
         // headers have format:
         // key: value CRLF
+        int position = buffer.indexOf(CRLF);
+
+        while (position != -1) {
+            String headerLine = buffer.substring(0, position);
+            buffer.delete(0, position  + 2);
+
+            if (headerLine.length() == 0) {
+                return true;
+            }
+
+            String [] parts = headerLine.split(": ");
+
+            String key = parts[0];
+            String value = parts[1];
+
+            request.getHeaders().put(key.trim(), value.trim());
+
+            position = buffer.indexOf(CRLF);
+        }
 
         // the list ends with an empty CRLF
 
@@ -104,10 +140,21 @@ public class HttpRequestCodec implements Codec<String, HttpRequest> {
 
     private boolean parseBody() {
         // body length is controlled by the LENGTH_HEADER header
+        if (!request.getHeaders().containsKey(LENGTH_FIELD)) {
+            return true;
+        }
+
+        int bodySize = Integer.parseInt(request.getHeaders().get(LENGTH_FIELD));
 
         // if you don't have enough bytes in the buffer, return false
+        if (buffer.length() < bodySize) {
+            return false;
+        }
 
         // otherwise consume them
+        request.setBody(buffer.substring(0, bodySize));
+        buffer.delete(0, bodySize);
+
         return true;
     }
 
