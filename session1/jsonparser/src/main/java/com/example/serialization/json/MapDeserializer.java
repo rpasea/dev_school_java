@@ -2,7 +2,7 @@ package com.example.serialization.json;
 
 import com.example.serialization.DeserializationException;
 import com.example.serialization.json.model.*;
-import javafx.util.Pair;
+import com.example.serialization.json.model.Pair;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class MapDeserializer {
 
         while (!json.isEmpty()) {
             json = json.trim();
-            Pair<Token, Integer> next = DeseializationHelper.findNextToken(json);
+            Pair<Token, Integer> next = DeserializationHelper.findNextToken(json);
 
             if (next.getValue() == -1) {
                 throw new DeserializationException("Invalid json");

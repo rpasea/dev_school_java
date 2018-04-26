@@ -17,6 +17,11 @@ public class HttpResponseCodec implements Codec<String, HttpResponse> {
     @Override
     public String encode(HttpResponse httpResponse) {
         // this is pretty straight forward, just implement the protocol
-        return "";
+        String response = "";
+        response += httpResponse.getVersion();
+        response += httpResponse.getStatus();
+        response += httpResponse.getReason();
+        response += CRLF;
+        return response;
     }
 }
