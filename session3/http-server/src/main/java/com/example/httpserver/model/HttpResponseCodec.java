@@ -3,7 +3,6 @@ package com.example.httpserver.model;
 import com.example.tcpserver.codec.Codec;
 
 import java.util.List;
-import java.util.Map;
 
 public class HttpResponseCodec implements Codec<String, HttpResponse> {
     private static final String CRLF = "\r\n";
@@ -17,6 +16,18 @@ public class HttpResponseCodec implements Codec<String, HttpResponse> {
     @Override
     public String encode(HttpResponse httpResponse) {
         // this is pretty straight forward, just implement the protocol
-        return "";
+        StringBuilder resp = new StringBuilder();
+        resp.append(httpResponse.getStatus());
+        resp.append(" ").append(httpResponse.getVersion());
+        resp.append(" ").append(httpResponse.getReason());
+        resp.append(CRLF).append(LENGTH_FIELD).append(":");
+        resp.append(httpResponse.getBody().length()).append(CRLF);
+        httpResponse.getHeaders().forEach((key,value) ->{
+            resp.append(key).append(":").append(CRLF);
+        });
+
+        resp.append(httpResponse.getBody());
+
+        return resp.toString();
     }
 }
