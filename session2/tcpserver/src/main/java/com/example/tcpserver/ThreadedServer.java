@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class ThreadedServer extends TcpServer {
                     }
             );
 
-            connections.put(connection, )
+//            connections.put(connection, )
 
             clientThread.start();
 
