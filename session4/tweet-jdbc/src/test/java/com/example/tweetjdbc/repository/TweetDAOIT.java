@@ -22,9 +22,10 @@ public class TweetDAOIT {
     @Test
     public void shouldCorrectlyRetrieveTweet() {
         Tweet expected = new Tweet(1, 1, LocalDateTime.now(), "hello from the test world!");
+        Tweet returned = tweetDAO.getTweet(1L).get();
 
-        assertEquals(expected.getId(), tweetDAO.getTweet(1L).get().getId());
-        assertEquals(expected.getOwner_id(), tweetDAO.getTweet(1L).get().getOwner_id());
-        assertEquals(expected.getText(), tweetDAO.getTweet(1L).get().getText());
+        assertEquals(expected.getId(), returned.getId());
+        assertEquals(expected.getOwner_id(), returned.getOwner_id());
+        assertEquals(expected.getText(), returned.getText());
     }
 }
