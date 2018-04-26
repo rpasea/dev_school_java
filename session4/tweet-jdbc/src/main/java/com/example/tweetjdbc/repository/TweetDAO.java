@@ -28,8 +28,11 @@ public class TweetDAO {
         @Override
         public Tweet mapRow(ResultSet resultSet, int i) throws SQLException {
             // map from a ResultSet to a Tweet
-
-            return null;
+            return new Tweet(
+                    resultSet.getLong("id"),
+                    resultSet.getString("text"),
+                    resultSet.getTimestamp("created").toLocalDateTime(),
+                    resultSet.getLong("owner_id"));
         }
     }
 
@@ -40,20 +43,28 @@ public class TweetDAO {
     }
 
     public List<Tweet> getTweets() {
-        // write your query
-        return null;
+        return jdbcTemplate.query("SELECT * FROM tweet", new TweetDAO.TweetMapper());
     }
 
     public List<Tweet> getTweetsByOwner(String owner) {
         // write your query
-        return null;
+        return jdbcTemplate.query(
+                "SELECT t.* FROM tweet t LEFT JOIN user u ON t.owner_id = user.id WHERE u.name = ?",
+                new Object[] {owner},
+                new TweetDAO.TweetMapper()
+        );
     }
 
     public Optional<Tweet> getTweet(Long id) {
-        // write your query
-
-        // how about not found?
-        return Optional.empty();
+        try {
+            return Optional.of(
+                    jdbcTemplate.queryForObject("SELECT * from tweet where id = ?",
+                            new Object[]{id},
+                            new TweetDAO.TweetMapper()));
+        } catch (DataAccessException ex) {
+            LOG.error("Entity not found");
+            return Optional.empty();
+        }
     }
 
     public Tweet insertTweet(Tweet tweet) {
@@ -64,6 +75,6 @@ public class TweetDAO {
     }
 
     public void deleteTweet(Long id) {
-        // write your query
+        jdbcTemplate.update("DELETE from tweet where id = ?", new Object[] {id});
     }
 }
