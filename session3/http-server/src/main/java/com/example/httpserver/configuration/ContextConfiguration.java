@@ -9,6 +9,7 @@ import com.example.tcpserver.codec.CodecPipeline;
 import com.example.tcpserver.codec.CodecPipelineFactory;
 import com.example.tcpserver.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +44,7 @@ public class ContextConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public TcpServer tcpServer(@Autowired CodecPipelineFactory codecPipelineFactory,
-                               @Autowired MessageHandler messageHandler) {
+                               @Autowired @Qualifier("helloComponent")MessageHandler messageHandler) {
         int port = Integer.parseInt(environment.getProperty("server.port"));
         return new NioServer(port, codecPipelineFactory, messageHandler);
     }
