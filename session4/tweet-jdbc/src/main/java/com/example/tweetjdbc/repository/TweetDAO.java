@@ -13,10 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Repository
 public class TweetDAO {
@@ -27,9 +25,10 @@ public class TweetDAO {
         @Nullable
         @Override
         public Tweet mapRow(ResultSet resultSet, int i) throws SQLException {
-            // map from a ResultSet to a Tweet
-
-            return null;
+            return new Tweet(resultSet.getLong("id"),
+                             resultSet.getLong("owner_id"),
+                             resultSet.getTimestamp("created").toLocalDateTime(),
+                             resultSet.getString("text"));
         }
     }
 
@@ -40,30 +39,42 @@ public class TweetDAO {
     }
 
     public List<Tweet> getTweets() {
-        // write your query
-        return null;
+        return jdbcTemplate.query("select * from tweet", new TweetDAO.TweetMapper());
     }
 
     public List<Tweet> getTweetsByOwner(String owner) {
-        // write your query
-        return null;
+        try {
+            return jdbcTemplate.query("select * from tweet join user u on u.id = tweet.owner_id where owner_data.name = ?", new Object[]{owner},
+                    new TweetDAO.TweetMapper());
+        }
+        catch (DataAccessException ex){
+            return new ArrayList<Tweet>();
+        }
     }
 
     public Optional<Tweet> getTweet(Long id) {
-        // write your query
-
-        // how about not found?
-        return Optional.empty();
+        try {
+            return Optional.of(
+                    jdbcTemplate.queryForObject("select * from tweet where id = ?", new Object[]{id},
+                    new TweetDAO.TweetMapper()));
+        } catch (DataAccessException exception) {
+            return Optional.empty();
+        }
     }
 
     public Tweet insertTweet(Tweet tweet) {
-        // write your query
+        Map<String, Object> params = new HashMap<>();
+        params.put("owner_id", tweet.getOwner_id());
+        params.put("datetime", LocalDateTime.now());
+        params.put("text", tweet.getText());
 
-        // use the SimpleJdbcInsert class
-        return null;
+        SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate).withTableName("tweet")
+                .usingGeneratedKeyColumns("id");
+        Number id = insert.executeAndReturnKey(params);
+        return getTweet((long)id).get();
     }
 
     public void deleteTweet(Long id) {
-        // write your query
+        jdbcTemplate.update("DELETE from tweet where id = ?", new Object[] {id});
     }
 }

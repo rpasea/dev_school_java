@@ -20,6 +20,7 @@ public class UserDAOIT {
     @Test
     public void shouldCorrectlyRetrieveUser() {
         User expected = new User(1, "gicu_testeanu");
-        assertEquals(expected, userDAO.getUser(1L).get());
+        User actualUser = userDAO.getUser(1L).get();
+        assertEquals(expected, actualUser);
     }
 }
