@@ -2,9 +2,17 @@ package com.example.serialization.json;
 
 import org.junit.Test;
 
+//import java.awt.List;
+import java.util.List;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Mockito.*;
+
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -26,6 +34,24 @@ public class JsonParserTest {
     public void givenMapWhenSerializeThenReturnCorrectJsonString() throws Exception {
         String actual = jsonParser.serialize(DESERIALIZED);
         assertEquals(SERIALIZED, actual);
+    }
+
+    @Mock JsonSerdes jsonSer;
+
+    @Test
+    public void mockitoTestUsage(){
+
+        List<String> fakeList = Mockito.mock(List.class);
+
+
+        Mockito.when(fakeList.get(ArgumentMatchers.anyInt())).thenReturn("next");
+
+        for(Integer i = 0; i < 5; i++){
+            String myResult = fakeList.get(i);
+        }
+
+
+        //Mockito.verify()
     }
 
 
