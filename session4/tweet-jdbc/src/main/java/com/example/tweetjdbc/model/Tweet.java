@@ -28,7 +28,7 @@ public class Tweet {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, owner_id, text, created);
+        return Objects.hash(id, text, owner_id,  created);
     }
 
     public void setId(long id) {
@@ -64,10 +64,10 @@ public class Tweet {
         return created;
     }
 
-    public Tweet(long id, long owner_id, String tweet, LocalDateTime created) {
+    public Tweet(long id, String text, long owner_id, LocalDateTime created) {
         this.id = id;
-        this.owner_id = owner_id;
         this.text = text;
+        this.owner_id = owner_id;
         this.created = created;
     }
 }
