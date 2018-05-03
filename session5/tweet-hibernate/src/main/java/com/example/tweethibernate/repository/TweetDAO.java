@@ -1,6 +1,7 @@
 package com.example.tweethibernate.repository;
 
 import com.example.tweethibernate.model.Tweet;
+import com.example.tweethibernate.model.User;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +24,24 @@ public class TweetDAO {
     }
 
     public List<Tweet> getTweetsByOwner(Long ownerId, Session session) {
-        // TODO
-        return null;
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Tweet> query = builder.createQuery(Tweet.class);
+        Root<Tweet> root = query.from(Tweet.class);
+        query.where(builder.equal(root.get("owner").get("id"), ownerId));
+
+        return session.createQuery(query).list();
     }
 
     public Optional<Tweet> getTweet(Long id, Session session) {
-        // TODO
-        return null;
+         return Optional.ofNullable(session.get(Tweet.class, id));
     }
 
     public Tweet insertTweet(Tweet tweet, Session session) {
-        // TODO
-        return null;
+        Long id = (Long) session.save(tweet);
+        return getTweet(id, session).get();
     }
 
     public void deleteTweet(Tweet tweet, Session session) {
-        // TODO
+        session.delete(tweet);
     }
 }

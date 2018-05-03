@@ -23,9 +23,9 @@ public class TweetsResource {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<Tweet> getTweets(Principal principal) {
-        User owner = userService.getUserByName(principal.getName()).orElseThrow(NotFoundException::new);
+    @GetMapping("/user/{name}")
+    public List<Tweet> getTweets(@PathVariable("name") String name) {
+        User owner = userService.getUserByName(name).orElseThrow(NotFoundException::new);
 
         return tweetService.getTweetsByOwner(owner);
     }

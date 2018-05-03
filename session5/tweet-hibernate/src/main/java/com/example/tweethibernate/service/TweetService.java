@@ -30,8 +30,13 @@ public class TweetService {
     }
 
     public List<Tweet> getTweetsByOwner(User owner) {
-        // TODO
-        return null;
+        return transactionManager.doInTransaction(new ProgrammaticTransactionManager.BusinessTransaction<List<Tweet>>() {
+            @Override
+            public List<Tweet> execute(Session session) {
+
+                return tweetDAO.getTweetsByOwner(owner.getId(), session);
+            }
+        });
     }
 
     public Optional<Tweet> getTweet(Long id) {
