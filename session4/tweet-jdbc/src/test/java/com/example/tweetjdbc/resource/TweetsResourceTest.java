@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TweetsResource.class)
-public class TweetsResourceIT {
+public class TweetsResourceTest {
 
     @Autowired
     private MockMvc mockMvc;
