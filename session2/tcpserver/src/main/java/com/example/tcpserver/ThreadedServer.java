@@ -51,9 +51,9 @@ public class ThreadedServer extends TcpServer {
 
     private void listenLoop() {
         while (isRunning()) {
-
+            Socket client = null;
             try {
-                Socket client = serverSocket.accept();
+                client = serverSocket.accept();
             } catch (IOException e) {
                 stop();
             }
@@ -72,7 +72,7 @@ public class ThreadedServer extends TcpServer {
                     }
             );
 
-            connections.put(connection, )
+            connections.put(connection, new ConnectionData(client, clientThread));
 
             clientThread.start();
 
