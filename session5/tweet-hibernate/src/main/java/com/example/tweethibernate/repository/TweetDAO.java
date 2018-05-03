@@ -23,21 +23,24 @@ public class TweetDAO {
     }
 
     public List<Tweet> getTweetsByOwner(Long ownerId, Session session) {
-        // TODO
+        // SELECT * FROM tweets t LEFT JOIN users u ON t.owner_id = u.id WHERE u.id = ownerId
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Tweet> query = builder.createQuery(Tweet.class);
+        Root<Tweet> root = query.from(Tweet.class);
+        query.where(builder.equal(root.get("owner"), ownerId));
         return null;
     }
 
     public Optional<Tweet> getTweet(Long id, Session session) {
-        // TODO
-        return null;
+        return Optional.ofNullable(session.get(Tweet.class, id));
     }
 
     public Tweet insertTweet(Tweet tweet, Session session) {
-        // TODO
-        return null;
+        Long id = (Long) session.save(tweet);
+        return getTweet(id, session).get();
     }
 
     public void deleteTweet(Tweet tweet, Session session) {
-        // TODO
+        session.delete(tweet);
     }
 }

@@ -36,6 +36,7 @@ public class TweetsResource {
 
     @DeleteMapping("/{id}")
     public void deleteTweet(@PathVariable Long id) {
+        tweetDAO.deleteTweet(id);
     }
 
     }
