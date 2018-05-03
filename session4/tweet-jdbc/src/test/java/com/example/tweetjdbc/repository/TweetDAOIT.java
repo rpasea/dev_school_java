@@ -10,17 +10,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = TestDbConfiguration.class)
-public class TweetDAOTest {
+public class TweetDAOIT {
     @Autowired
     private TweetDAO tweetDAO;
 
     @Test
     public void shouldCorrectlyRetrieveTweet() {
-        Tweet expected = new Tweet(1, "hello from the jdbc world!", 1, LocalDateTime.now() );
-        //assertEquals(expected, tweetDAO.getTweet(0b1L).get());
-        
+        Tweet expected = new Tweet(1, "hello from the test world!", 1, LocalDateTime.now() );
+        Tweet actual = tweetDAO.getTweet(1L).get();
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getOwner_id(), actual.getOwner_id());
+        assertEquals(expected.getText(), actual.getText());
     }
 }

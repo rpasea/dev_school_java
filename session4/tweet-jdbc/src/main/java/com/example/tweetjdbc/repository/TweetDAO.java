@@ -42,11 +42,11 @@ public class TweetDAO {
 
     public List<Tweet> getTweets() {
         // write your query
-        return jdbcTemplate.query("SELECT * FROM tweets", new TweetDAO.TweetMapper());
+        return jdbcTemplate.query("SELECT * FROM tweet", new TweetDAO.TweetMapper());
     }
 
     public List<Tweet> getTweetsByOwner(String owner) {
-        return jdbcTemplate.query("SELECT * FROM tweets where owner_id = ?",
+        return jdbcTemplate.query("SELECT * FROM tweet where owner_id = ?",
                 new Object[] {owner}, new TweetDAO.TweetMapper());
 
     }
@@ -58,7 +58,7 @@ public class TweetDAO {
 
 
             return Optional.of(
-                    jdbcTemplate.queryForObject("SELECT * FROM tweets where id = ?",
+                    jdbcTemplate.queryForObject("SELECT * FROM tweet where id = ?",
                             new Object[]{id}, new TweetMapper()));
         }catch (DataAccessException ex) {
 
