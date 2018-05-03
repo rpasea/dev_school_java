@@ -30,21 +30,42 @@ public class TweetService {
     }
 
     public List<Tweet> getTweetsByOwner(User owner) {
-        // TODO
-        return null;
+        return transactionManager.doInTransaction(new ProgrammaticTransactionManager.BusinessTransaction<List<Tweet>>() {
+            @Override
+            public List<Tweet> execute(Session session) {
+                return tweetDAO.getTweetsByOwner(owner.getId(), session);
+            }
+        });
     }
 
     public Optional<Tweet> getTweet(Long id) {
-        // TODO
-        return null;
+        return transactionManager.doInTransaction(new ProgrammaticTransactionManager.BusinessTransaction<Optional<Tweet>>() {
+            @Override
+            public Optional<Tweet> execute(Session session) {
+                return tweetDAO.getTweet(id, session);
+            }
+        });
     }
 
     public Tweet insertTweet(Tweet tweet) {
-        // TODO
-        return null;
+        return transactionManager.doInTransaction(new ProgrammaticTransactionManager.BusinessTransaction<Tweet>() {
+            @Override
+            public Tweet execute(Session session) {
+                return tweetDAO.insertTweet(tweet, session);
+            }
+        });
     }
 
     public void deleteTweet(Long tweetId) {
-        // TODO
+        transactionManager.doInTransaction(new ProgrammaticTransactionManager.BusinessTransaction<Void>() {
+            @Override
+            public Void execute(Session session) {
+                Optional<Tweet> tweet = tweetDAO.getTweet(tweetId, session);
+                if (tweet.isPresent()) {
+                    tweetDAO.deleteTweet(tweet.get(), session);
+                }
+                return null;
+            }
+        });
     }
 }
