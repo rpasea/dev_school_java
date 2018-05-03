@@ -2,6 +2,7 @@ package com.example.tweetjdbc.resource;
 
 import com.example.tweetjdbc.exception.NotFoundException;
 import com.example.tweetjdbc.model.Tweet;
+import com.example.tweetjdbc.model.User;
 import com.example.tweetjdbc.repository.TweetDAO;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,26 @@ public class TweetsResource {
 
     public TweetsResource(TweetDAO tweetDAO) {
         this.tweetDAO = tweetDAO;
+    }
+
+    @GetMapping
+    public List<Tweet> getTweets() {
+        return tweetDAO.getTweets();
+    }
+
+    @GetMapping("/{id}")
+    public Tweet getTweet(@PathVariable Long id) {
+        return tweetDAO.getTweet(id).orElseThrow(NotFoundException::new);
+    }
+
+    @PostMapping
+    public Tweet addTweet(@RequestBody Tweet tweet) {
+        return tweetDAO.insertTweet(tweet);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        tweetDAO.deleteTweet(id);
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.Objects;
 
 public class Tweet {
     // TODO
+
     private long          id;
     private long          owner_id;
     private LocalDateTime created;
