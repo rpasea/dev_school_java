@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: com.example.tweetjdbc.resource.TweetsResourceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 10.388 s <<< FAILURE! - in com.example.tweetjdbc.resource.TweetsResourceTest
+shouldRetrieveTweets(com.example.tweetjdbc.resource.TweetsResourceTest)  Time elapsed: 0.314 s  <<< FAILURE!
+java.lang.AssertionError: Response status expected:<200> but was:<404>
+	at com.example.tweetjdbc.resource.TweetsResourceTest.shouldRetrieveTweets(TweetsResourceTest.java:33)
+

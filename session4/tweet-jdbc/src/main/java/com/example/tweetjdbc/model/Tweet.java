@@ -1,13 +1,20 @@
 package com.example.tweetjdbc.model;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 import java.util.Objects;
 
+@Validated
 public class Tweet {
     private long id;
+    @NotNull
     private long owner_id;
     private LocalDateTime created;
+    @Size(max = 140)
     private String text;
 
     public Tweet(long id, String text, long owner_id, LocalDateTime created) {

@@ -1,0 +1,3 @@
+com\example\tweetjdbc\repository\UserDAOTest.class
+com\example\tweetjdbc\repository\TestDbConfiguration.class
+com\example\tweetjdbc\resource\TweetsResourceTest.class
