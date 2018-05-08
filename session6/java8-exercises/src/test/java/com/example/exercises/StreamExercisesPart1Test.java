@@ -214,9 +214,21 @@ public class StreamExercisesPart1Test {
     // complete two functions which are used in stream reduce operation
     private <A,B> Collection<B>  mapInTermsOfReduce(Stream<A> input,Function<A,B> f){
         List<B> identity=new LinkedList<>();
-        BiFunction<List<B>,A,List<B>> accumulate = (l, e) -> l.add(f.apply(e));
 
-        BinaryOperator<List<B>> combine=(l1,l2)-> l1.;
+        BiFunction<List<B>,A,List<B>> accumulate = (l, e) -> {
+            l.add(f.apply(e));
+            List<B> lb = new LinkedList<B>();
+            lb.addAll(l);
+            return lb;
+        };
+
+        BinaryOperator<List<B>> combine=(l1,l2)-> {
+            List<B> result = new LinkedList<B>();
+            result.addAll(l1);
+            result.addAll(l2);
+
+            return result;
+        };
 
 
         return input.reduce(identity,accumulate,combine);
