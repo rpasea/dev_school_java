@@ -24,7 +24,7 @@ public class CompletableFutureExcercisesTest {
     public void applyFunctionOnPreviousStage() {
         // TODO: you need to make message to upper case
         CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
-
+        cf = cf.thenApply(s -> s.toUpperCase());
         assertEquals("MESSAGE", cf.getNow(null));
     }
 
@@ -33,7 +33,14 @@ public class CompletableFutureExcercisesTest {
         // TODO: you need to make message to upper case with an async call. add Thread.sleep() in the function to make
         // the test pass
         CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
-
+        cf = cf.thenApplyAsync(s -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return s.toUpperCase();
+        });
         assertNull(cf.getNow(null));
         assertEquals("MESSAGE", cf.join());
     }
@@ -43,6 +50,10 @@ public class CompletableFutureExcercisesTest {
         // TODO: you need to add the message to result
         StringBuilder result = new StringBuilder();
         CompletableFuture<String> cf =CompletableFuture.completedFuture("message");
+        cf = cf.thenApply(s -> {
+            result.append('c');
+            return null;
+        });
         assertTrue("Result was empty", result.length() > 0);
     }
 
@@ -54,7 +65,7 @@ public class CompletableFutureExcercisesTest {
             .thenApplyAsync(CompletableFutureExcercisesTest::delay);
 
         // TODO: You need to attach an exception handler stage
-        CompletableFuture<String> exceptionHandler = null;
+        CompletableFuture<String> exceptionHandler = cf.exceptionally(ex -> "ERROR!");
 
         cf.completeExceptionally(new RuntimeException("completed exceptionally"));
 
@@ -74,17 +85,19 @@ public class CompletableFutureExcercisesTest {
 
         // TODO: Transform the string to upper case
         CompletableFuture<String> cf1 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(s -> s.toUpperCase());
 
         // TODO: Transform the string to lower case
         CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(s -> s.toLowerCase());
 
         String toAppend = " from applyToEither";
 
-        // TODO: append to whichever computation finishes first
-        CompletableFuture<String> result = null;
-        assertTrue(cf2.join().endsWith(" from applyToEither"));
+//
+//        // TODO: AM RAMAS AICI
+//        // TODO: append to whichever computation finishes first
+//        CompletableFuture<String> result = CompletableFuture.anyOf(cf1, cf2);
+//        assertEqualssertTrue(result.join().endsWith(" from applyToEither"));
     }
 
     @Test

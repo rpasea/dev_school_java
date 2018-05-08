@@ -25,7 +25,7 @@ public class StreamExercisesPart1Test {
     public void simpleMapping_JustAddOneToCreatedStream() throws Exception {
         List<Integer> start = Arrays.asList(1, 2, 3, 4, 5);
 
-        Stream<Integer> result = start.stream(); // complete this line - add one to each value
+        Stream<Integer> result = start.stream().map(i -> i+1); // complete this line - add one to each value
 
         List expected = Arrays.asList(2, 3, 4, 5, 6);
         assertEquals(expected, result.collect(Collectors.toList()));
@@ -37,7 +37,7 @@ public class StreamExercisesPart1Test {
      */
     @Test
     public void singleFunctionObjectMapping_extractName() throws Exception {
-        Function<Product,String> getName=null; // complete this, Product class is definied at the bottom of this file
+        Function<Product,String> getName= (s) -> s.name; // complete this, Product class is definied at the bottom of this file
 
         Stream<String> names = products().map(getName);
 
@@ -58,8 +58,8 @@ public class StreamExercisesPart1Test {
 
     private int sum(int n){
         return IntStream
-            .iterate(1,null) //<- FIX
-            .limit(0)  //<- FIX
+            .iterate(1, i -> ++i) //<- FIX
+            .limit(n)  //<- FIX
             .sum();
     }
 
@@ -71,7 +71,7 @@ public class StreamExercisesPart1Test {
     public void findMaxInt() throws Exception {
         OptionalInt optionalMax = IntStream
             .of(11, 22, 4, 5, 9, 1, 79, 2, 3)
-            .findAny();  // <- FIX
+            .max();  // <- FIX
 
         assertThat(optionalMax).hasValue(79);
 
@@ -84,7 +84,7 @@ public class StreamExercisesPart1Test {
             new BigInteger("10"),
             new BigInteger("20"),
             new BigInteger("30")
-        ).mapToInt(null).hashCode();  // <- FIX BOTH , change boxed type to int and then replace 'hashCode' method
+        ).mapToInt(s -> s.intValue()).sum();  // <- FIX BOTH , change boxed type to int and then replace 'hashCode' method
 
         assertThat(sum).isEqualTo(60);
     }
@@ -96,8 +96,8 @@ public class StreamExercisesPart1Test {
      */
     @Test
     public void multipleFunctionsMapping_extractPriceAndConvertToBigDecimal() throws Exception {
-        Function<Product,String> getPrice=null;      //complete this
-        Function<String,BigDecimal> toBigDecimal=null; //complete this
+        Function<Product,String> getPrice=(p) -> p.price;      //complete this
+        Function<String,BigDecimal> toBigDecimal=(bd) -> new BigDecimal(bd); //complete this
 
         Stream<BigDecimal> prices =
             products().map(getPrice).map(toBigDecimal);
@@ -115,12 +115,12 @@ public class StreamExercisesPart1Test {
      */
     @Test
     public void sumAllPrices_extractPricesChangeToBigDecimalAndReduce() throws Exception {
-        Function<Product,String> getPrice=null;
-        Function<String,BigDecimal> toBigDecimal=null;
+        Function<Product,String> getPrice=(p) -> p.price;
+        Function<String,BigDecimal> toBigDecimal=(s) -> new BigDecimal(s);
 
         Function<Product, BigDecimal> bigDecimalPrice = getPrice.andThen(toBigDecimal);
 
-        BigDecimal result = products().map(bigDecimalPrice).reduce(null, null);
+        BigDecimal result = products().map(bigDecimalPrice).reduce(new BigDecimal("0"), BigDecimal::add);
 
         assertThat(result).isEqualTo(new BigDecimal("565.5"));
     }
@@ -132,7 +132,7 @@ public class StreamExercisesPart1Test {
     public void rewriteWithForeach() throws Exception {
         List<String> names=new LinkedList<>();
 
-        products().forEach(null); // write each name to names list
+        products().forEach(s -> names.add(s.name)); // write each name to names list
 
         assertThat(names).containsExactly("tv","console","mouse","speakers");
     }
