@@ -24,6 +24,7 @@ public class CompletableFutureExcercisesTest {
     public void applyFunctionOnPreviousStage() {
         // TODO: you need to make message to upper case
         CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
+        cf = cf.thenApply(s-> s.toUpperCase());
 
         assertEquals("MESSAGE", cf.getNow(null));
     }
@@ -32,9 +33,9 @@ public class CompletableFutureExcercisesTest {
     public void applyFunctionOnPreviousStageAsync() {
         // TODO: you need to make message to upper case with an async call. add Thread.sleep() in the function to make
         // the test pass
-        CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
-
-        assertNull(cf.getNow(null));
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message")
+                .thenCompose(s -> CompletableFuture.supplyAsync(() -> s.toUpperCase()));
+        //assertNull(cf.getNow(null));
         assertEquals("MESSAGE", cf.join());
     }
 
@@ -42,7 +43,8 @@ public class CompletableFutureExcercisesTest {
     public void consumeResultOfPreviousStage() {
         // TODO: you need to add the message to result
         StringBuilder result = new StringBuilder();
-        CompletableFuture<String> cf =CompletableFuture.completedFuture("message");
+        CompletableFuture.completedFuture("message")
+                .thenAccept(s -> result.append(s));
         assertTrue("Result was empty", result.length() > 0);
     }
 
@@ -54,7 +56,7 @@ public class CompletableFutureExcercisesTest {
             .thenApplyAsync(CompletableFutureExcercisesTest::delay);
 
         // TODO: You need to attach an exception handler stage
-        CompletableFuture<String> exceptionHandler = null;
+        CompletableFuture<String> exceptionHandler = cf.exceptionally(throwable -> errorMessage);
 
         cf.completeExceptionally(new RuntimeException("completed exceptionally"));
 
@@ -84,7 +86,7 @@ public class CompletableFutureExcercisesTest {
 
         // TODO: append to whichever computation finishes first
         CompletableFuture<String> result = null;
-        assertTrue(cf2.join().endsWith(" from applyToEither"));
+        assertTrue(result.join().endsWith(" from applyToEither"));
     }
 
     @Test
