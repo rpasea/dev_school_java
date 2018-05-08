@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
+import static java.lang.Thread.*;
 import static junit.framework.TestCase.*;
 
 public class CompletableFutureExcercisesTest {
@@ -13,7 +14,7 @@ public class CompletableFutureExcercisesTest {
     private static <T> T delay(T object) {
         int sleepDuration = new Random().nextInt(500) + 500;
         try {
-            Thread.sleep(sleepDuration);
+            sleep(sleepDuration);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -22,17 +23,25 @@ public class CompletableFutureExcercisesTest {
 
     @Test
     public void applyFunctionOnPreviousStage() {
-        // TODO: you need to make message to upper case
         CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
+        cf = cf.thenApply(s -> s = s.toUpperCase());
 
         assertEquals("MESSAGE", cf.getNow(null));
     }
 
     @Test
     public void applyFunctionOnPreviousStageAsync() {
-        // TODO: you need to make message to upper case with an async call. add Thread.sleep() in the function to make
-        // the test pass
         CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
+        cf = cf.thenApplyAsync(s -> {
+            try {
+                sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return s.toUpperCase();
+
+        });
 
         assertNull(cf.getNow(null));
         assertEquals("MESSAGE", cf.join());
@@ -40,9 +49,10 @@ public class CompletableFutureExcercisesTest {
 
     @Test
     public void consumeResultOfPreviousStage() {
-        // TODO: you need to add the message to result
-        StringBuilder result = new StringBuilder();
-        CompletableFuture<String> cf =CompletableFuture.completedFuture("message");
+        final StringBuilder result = new StringBuilder();
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
+        cf.thenAccept(s -> result.append(s));
+
         assertTrue("Result was empty", result.length() > 0);
     }
 
@@ -54,7 +64,7 @@ public class CompletableFutureExcercisesTest {
             .thenApplyAsync(CompletableFutureExcercisesTest::delay);
 
         // TODO: You need to attach an exception handler stage
-        CompletableFuture<String> exceptionHandler = null;
+        CompletableFuture<String> exceptionHandler = cf.exceptionally(ex -> errorMessage);
 
         cf.completeExceptionally(new RuntimeException("completed exceptionally"));
 
@@ -73,18 +83,21 @@ public class CompletableFutureExcercisesTest {
         String original = "Message";
 
         // TODO: Transform the string to upper case
-        CompletableFuture<String> cf1 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+        CompletableFuture<Void> cf1 = CompletableFuture.completedFuture(original)
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay)
+                .thenAccept(s -> s = s.toUpperCase());
+
 
         // TODO: Transform the string to lower case
-        CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+        CompletableFuture<Void> cf2 = CompletableFuture.completedFuture(original)
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay)
+                .thenAccept(s -> s = s.toLowerCase());
 
         String toAppend = " from applyToEither";
 
         // TODO: append to whichever computation finishes first
         CompletableFuture<String> result = null;
-        assertTrue(cf2.join().endsWith(" from applyToEither"));
+        assertTrue(result.join().endsWith(" from applyToEither"));
     }
 
     @Test
