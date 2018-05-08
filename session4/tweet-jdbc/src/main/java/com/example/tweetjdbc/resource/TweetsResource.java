@@ -19,4 +19,24 @@ public class TweetsResource {
         this.tweetDAO = tweetDAO;
     }
 
+    @GetMapping
+    public List<Tweet> getTweets() {
+        return tweetDAO.getTweets();
+    }
+
+    @GetMapping("/{id}")
+    public Tweet getTweet(@PathVariable Long id) {
+        return tweetDAO.getTweet(id).orElseThrow(NotFoundException::new);
+    }
+
+    @PostMapping
+    public Tweet addTweet(@RequestBody Tweet tweet) {
+        return tweetDAO.insertTweet(tweet);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteTweet(@PathVariable Long id) {
+        tweetDAO.deleteTweet(id);
+    }
+
 }
