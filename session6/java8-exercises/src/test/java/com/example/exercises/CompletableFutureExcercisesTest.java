@@ -50,7 +50,7 @@ public class CompletableFutureExcercisesTest {
     public void consumeResultOfPreviousStage() {
         // TODO: you need to add the message to result
         StringBuilder result = new StringBuilder();
-        CompletableFuture<String> cf =CompletableFuture.completedFuture("message");
+        CompletableFuture<String> cf = CompletableFuture.completedFuture("message");
         cf = cf.thenApply(s -> {
             result.append('c');
             return null;
@@ -86,11 +86,11 @@ public class CompletableFutureExcercisesTest {
 
         // TODO: Transform the string to upper case
         CompletableFuture<String> cf1 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(s -> s.toUpperCase());
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApply(s -> s.toUpperCase());
 
         // TODO: Transform the string to lower case
         CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(s -> s.toLowerCase());
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApply(s -> s.toLowerCase());
 
         String toAppend = " from applyToEither";
 
@@ -108,16 +108,15 @@ public class CompletableFutureExcercisesTest {
 
         // TODO: Transform the string to upper case
         CompletableFuture<String> cf1 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(String::toUpperCase);
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApply(String::toUpperCase);
 
         // TODO: Transform the string to lower case
         CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(String::toLowerCase);
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApply(String::toLowerCase);
 
 
         // TODO: write into the StringBuilder cf1 result + cf2 result
         CompletableFuture<String> cf3 = CompletableFuture.allOf(cf1, cf2).thenApply(cfs -> {
-            System.out.println(cfs);
             try {
                 result.append(cf1.get()).append(cf2.get());
             } catch (InterruptedException e) {
