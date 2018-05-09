@@ -3,6 +3,7 @@ package com.example.exercises;
 import com.example.data.Transactions;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -30,7 +31,7 @@ public class StreamExercisesPart3Test {
     @Test
     public void JoinIntoString() throws Exception {
         String result = Stream.of("java8", "scala", "kotlin")
-            .collect(Collectors.joining(null, null, null));
+            .collect(Collectors.joining(",", "[ Languages:", " ]"));
 
         assertThat(result).isEqualToIgnoringCase("[ Languages:java8,scala,kotlin ]");
     }
@@ -41,7 +42,7 @@ public class StreamExercisesPart3Test {
      */
     @Test
     public void collectToTreeSet() throws Exception {
-        Set<String> result = Stream.of("java8", "scala", "kotlin").collect(Collectors.toCollection(null));
+        Set<String> result = Stream.of("java8", "scala", "kotlin").collect(Collectors.toCollection(TreeSet::new));
         assertThat(result).isInstanceOf(TreeSet.class).hasSize(3);
     }
 
@@ -51,7 +52,7 @@ public class StreamExercisesPart3Test {
      * 2) pass in an "identity" function
      */
     public void countAverage() throws Exception {
-        Double average = Stream.of(10, 20, 30, 40).collect(null);
+        Double average = Stream.of(10, 20, 30, 40).collect(Collectors.averagingInt(Integer::new));
 
         assertThat(average).isEqualTo(25.0);
     }
@@ -62,7 +63,15 @@ public class StreamExercisesPart3Test {
     @Test
     public void partitionToDigitAndNotDigit() throws Exception {
         Map<Boolean, List<String>> result = Stream.of("1", "a", "bbb", "20", "66", "lodz", "jug", "1000")
-            .collect(Collectors.partitioningBy(null));
+            .collect(Collectors.partitioningBy(s -> {
+                try{
+                    Integer.parseInt(s);
+                    return true;
+                }
+                catch (NumberFormatException e){
+                    return false;
+                }
+            }));
 
         assertThat(result)
             .containsEntry(true, asList("1", "20", "66", "1000"))
@@ -70,6 +79,8 @@ public class StreamExercisesPart3Test {
 
     }
 
+
+    // UPS. Nu am vazut definitia asta
     private boolean isNumeric(String s) {
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
@@ -84,9 +95,9 @@ public class StreamExercisesPart3Test {
     @Test
     public void collectNumeric() throws Exception {
         Optional<Integer> max = Stream.of("1", "a", "bbb", "20", "66", "lodz", "jug", "1000")
-            .filter(null)
-            .collect(mapping(null,
-                Collectors.maxBy(null)
+            .filter(this::isNumeric)
+            .collect(mapping(Integer::parseInt,
+                Collectors.maxBy(Comparator.comparingInt(Integer::new))
             ));
 
         assertThat(max).hasValue(1000);
@@ -103,9 +114,9 @@ public class StreamExercisesPart3Test {
     public void groupAndJoinNumbers() throws Exception {
         Map<NUMBER_CHARACTERISTIC, String> result = Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9)
             .collect(
-                groupingBy(null,
+                groupingBy(s -> (s & 1) == 0 ? NUMBER_CHARACTERISTIC.EVEN : NUMBER_CHARACTERISTIC.ODD,
                     mapping(i -> i.toString(),
-                        joining(null))
+                        joining(","))
                 ));
 
         assertThat(result)
@@ -122,7 +133,7 @@ public class StreamExercisesPart3Test {
     @Test
     public void groupTransactions() throws Exception {
         Map<Boolean, Map<Integer, List<Integer>>> result = readTransactions().collect(
-            partitioningBy(t -> t.amount > 150, groupingBy(null, mapping(null, toList())))
+            partitioningBy(t -> t.amount > 150, groupingBy(s -> s.accountFrom, mapping(s -> s.id, toList())))
         );
 
 //        System.out.println(result); //check the result
@@ -172,23 +183,47 @@ class CustomToLinkedListCollector<T> implements Collector<T, List<T>, List<T>> {
 
     @Override
     public Supplier<List<T>> supplier() {
-        return null; //create new linkedlist
+        return new Supplier<List<T>>() {
+            @Override
+            public List<T> get() {
+                return new LinkedList<>();
+            }
+        };
+        // return null; //create new linkedlist
     }
 
     @Override
     public BiConsumer<List<T>, T> accumulator() {
-
-        return null; //add element to list
+        return new BiConsumer<List<T>, T>() {
+            @Override
+            public void accept(List<T> ts, T t) {
+                ts.add(t);
+            }
+        };
+        // return null; //add element to list
     }
 
     @Override
     public BinaryOperator<List<T>> combiner() {
-        return null; // merge two lists
+        return new BinaryOperator<List<T>>() {
+            @Override
+            public List<T> apply(List<T> ts, List<T> ts2) {
+                ts.addAll(ts2);
+                return ts;
+            }
+        };
+        // return null; // merge two lists
     }
 
     @Override
     public Function<List<T>, List<T>> finisher() {
-        return null; // return identity
+        return new Function<List<T>, List<T>>() {
+            @Override
+            public List<T> apply(List<T> ts) {
+                return ts;
+            }
+        };
+        // return null; // return identity
     }
 
     @Override
