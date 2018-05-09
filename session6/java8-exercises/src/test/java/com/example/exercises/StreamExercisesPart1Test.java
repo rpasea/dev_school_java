@@ -145,8 +145,8 @@ public class StreamExercisesPart1Test {
     @Test
     public void countNumberOfElementsWithMapReduce() throws Exception {
         Integer numberOfProducts = products()
-            .<Integer>map(null)
-            .reduce(null,null);
+            .<Integer>map(s -> 1)
+            .reduce(0,(a,b) -> a+b);
 
         assertThat(numberOfProducts).isEqualTo(4);
 
@@ -174,7 +174,7 @@ public class StreamExercisesPart1Test {
     //EXERCISE
     //Use 'map' on Stream and then 'reduce'
     private <A,B> B basicMapReduce(Function<A,B> map, BinaryOperator<B> reduce, B identity, Stream<A> input){
-        return null;
+        return input.map(map).reduce(identity, reduce);
     }
 
     /**
@@ -193,7 +193,7 @@ public class StreamExercisesPart1Test {
     private <A,B> Collection<B>  mapInTermsOfForEach(Stream<A> input,Function<A,B> f){
         Collection<B> result=new LinkedList<>();
 
-        input.forEach(null);
+        input.forEach(s -> result.add(f.apply(s)));
 
         return result;
     }
@@ -214,10 +214,17 @@ public class StreamExercisesPart1Test {
     // complete two functions which are used in stream reduce operation
     private <A,B> Collection<B>  mapInTermsOfReduce(Stream<A> input,Function<A,B> f){
         List<B> identity=new LinkedList<>();
-        BiFunction<List<B>,A,List<B>> accumulate=(l, e)->null;
+        BiFunction<List<B>,A,List<B>> accumulate=(l, e)-> {
+            l.add(f.apply(e));
+            return l;
+        };
 
-        BinaryOperator<List<B>> combine=(l1,l2)->null;
-
+        BinaryOperator<List<B>> combine = (l1,l2) -> {
+            for(B p: l2){
+                l1.add(f.apply((A) p));
+            }
+            return l1;
+        };
 
         return input.reduce(identity,accumulate,combine);
     }
