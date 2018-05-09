@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 
 import static junit.framework.TestCase.*;
 
@@ -93,11 +94,11 @@ public class CompletableFutureExcercisesTest {
 
         String toAppend = " from applyToEither";
 
-//
-//        // TODO: AM RAMAS AICI
-//        // TODO: append to whichever computation finishes first
-//        CompletableFuture<String> result = CompletableFuture.anyOf(cf1, cf2);
-//        assertEqualssertTrue(result.join().endsWith(" from applyToEither"));
+        // TODO: append to whichever computation finishes first
+        CompletableFuture<String> result = CompletableFuture.anyOf(cf1, cf2).thenApply(s -> {
+            return s.toString() + toAppend;
+        });
+        assertTrue(result.join().endsWith(" from applyToEither"));
     }
 
     @Test
@@ -107,15 +108,25 @@ public class CompletableFutureExcercisesTest {
 
         // TODO: Transform the string to upper case
         CompletableFuture<String> cf1 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(String::toUpperCase);
 
         // TODO: Transform the string to lower case
         CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
-            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay).thenApplyAsync(String::toLowerCase);
 
 
         // TODO: write into the StringBuilder cf1 result + cf2 result
-        CompletableFuture<String> cf3 = null;
+        CompletableFuture<String> cf3 = CompletableFuture.allOf(cf1, cf2).thenApply(cfs -> {
+            System.out.println(cfs);
+            try {
+                result.append(cf1.get()).append(cf2.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return result.toString();
+        });
 
         cf3.join();
         assertEquals("MESSAGEmessage", result.toString());
@@ -133,10 +144,15 @@ public class CompletableFutureExcercisesTest {
         // futures. You need to get something like "MESSAGEmessage.
 
         // TODO: Transform the string to lower case
-        //CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
-        //    .thenApplyAsync(CompletableFutureExcercisesTest::delay);
+        CompletableFuture<String> cf2 = CompletableFuture.completedFuture(original)
+            .thenApplyAsync(CompletableFutureExcercisesTest::delay);
 
-        CompletableFuture cf = null;
+
+        CompletableFuture cf = cf1.thenApply(String::toUpperCase).thenComposeAsync(
+                upper -> cf2.thenApply(String::toLowerCase).thenApply(lower -> {
+                    return upper + lower;
+                })
+        );
         assertEquals("MESSAGEmessage", cf.join());
     }
 
